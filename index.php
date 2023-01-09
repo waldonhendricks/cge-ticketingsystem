@@ -21,62 +21,100 @@ $section = 'home';
 require(CLIENTINC_DIR.'header.inc.php');
 ?>
 <div id="landing_page">
-<?php include CLIENTINC_DIR.'templates/sidebar.tmpl.php'; ?>
-<div class="main-content">
-<?php
-if ($cfg && $cfg->isKnowledgebaseEnabled()) { ?>
-<div class="search-form">
-    <form method="get" action="kb/faq.php">
-    <input type="hidden" name="a" value="search"/>
-    <input type="text" name="q" class="search" placeholder="<?php echo __('Search our knowledge base'); ?>"/>
-    <button type="submit" class="green button"><?php echo __('Search'); ?></button>
-    </form>
+
+<div class="welcome-section">
+    <div class="container"><div class="row">
+        <div class="col-md-12">
+            <div class="welcome-post">
+            <?php
+            if($cfg && ($page = $cfg->getLandingPage()))
+                echo $page->getBodyWithImages();
+            else
+                echo  '<h1>'.__('Welcome to the Support Center').'</h1>';
+            ?>
+            </div>
+        </div>
+    </div></div>
 </div>
-<?php } ?>
-<div class="thread-body">
-<?php
-    if($cfg && ($page = $cfg->getLandingPage()))
-        echo $page->getBodyWithImages();
-    else
-        echo  '<h1>'.__('Welcome to the Support Center').'</h1>';
-    ?>
+
+<div class="cta-box-cover">
+    <div class="container">
+        <div class="row">
+            <?php
+                if ($cfg->getClientRegistrationMode() != 'disabled'
+                    || !$cfg->isClientLoginRequired()) { ?>
+                    <div class="col-md-12">
+                        <div id="new_ticket" class="action-box">
+                            <div class="row row-no-padding row-eq-height">
+                                <div class="col-md-6 act-pic">
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="act-text">
+                                        <h3><?php echo __('Open a New Ticket');?></h3>
+                                        <div><?php echo __('Please provide as much detail as possible so we can best assist you. To update a previously submitted ticket, please login.');?></div>
+                                        <p>
+                                            <a href="open.php" class="green button"><?php echo __('Open a New Ticket');?></a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+            <?php } ?>
+
+            <div class="col-md-12">
+                <div id="check_status" class="action-box">
+
+                    <div class="row row-no-padding row-eq-height">
+                        <div class="col-md-6">
+                            <div class="act-text">
+                                <h3><?php echo __('Check Ticket Status');?></h3>
+                                <div><?php echo __('We provide archives and history of all your current and past support requests complete with responses.');?></div>
+                                <p>
+                                    <a href="<?php if(is_object($thisclient)){ echo 'tickets.php';} else {echo 'view.php';}?>" class="blue button"><?php echo __('Check Ticket Status');?></a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 act-pic">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<div class="clear"></div>
 
-<div>
-<?php
-if($cfg && $cfg->isKnowledgebaseEnabled()){
-    //FIXME: provide ability to feature or select random FAQs ??
-?>
-<br/><br/>
-<?php
-$cats = Category::getFeatured();
-if ($cats->all()) { ?>
-<h1><?php echo __('Featured Knowledge Base Articles'); ?></h1>
-<?php
-}
+</div>
 
-    foreach ($cats as $C) { ?>
-    <div class="featured-category front-page">
-        <i class="icon-folder-open icon-2x"></i>
-        <div class="category-name">
-            <?php echo $C->getName(); ?>
+<?php if ($cfg && $cfg->isKnowledgebaseEnabled()) { ?>
+
+    <div class="kb-home-cover">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+
+
+                    <p><?php echo sprintf(
+                        __('Be sure to browse our %s before opening a ticket'),
+                        sprintf('<a href="kb/index.php">%s</a>',
+                            __('Frequently Asked Questions (FAQs)')
+                        )); ?>
+                    </p>
+
+                    <div class="kb-search-form form-inline">
+                        <form method="get" action="kb/faq.php">
+                        <input type="hidden" name="a" value="search"/>
+                        <input type="text" name="q" class="search form-control" placeholder="<?php echo __('Search our knowledge base'); ?>"/>
+                        <button type="submit" class="btn btn-default"><?php echo __('Search'); ?></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-<?php foreach ($C->getTopArticles() as $F) { ?>
-        <div class="article-headline">
-            <div class="article-title"><a href="<?php echo ROOT_PATH;
-                ?>kb/faq.php?id=<?php echo $F->getId(); ?>"><?php
-                echo $F->getQuestion(); ?></a></div>
-            <div class="article-teaser"><?php echo $F->getTeaser(); ?></div>
-        </div>
-<?php } ?>
     </div>
-<?php
-    }
-}
-?>
-</div>
-</div>
 
+<?php } ?>
 <?php require(CLIENTINC_DIR.'footer.inc.php'); ?>
